@@ -1,5 +1,6 @@
 package com.example.models;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.text.SimpleDateFormat;
@@ -8,8 +9,13 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class User {
+
+    @NotBlank(message = "Введите логин")
     private String login;
+
+    @NotBlank(message = "Введите пароль")
     private String password;
+
     private String date;
 
     public User(String login, String password) {

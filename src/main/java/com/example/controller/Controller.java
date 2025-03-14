@@ -1,11 +1,13 @@
 package com.example.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import com.example.models.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -20,7 +22,7 @@ public class Controller {
     }
 
     @PostMapping("/user")
-    public ResponseEntity<User> createUser(@RequestBody User userRequest) throws InterruptedException {
+    public ResponseEntity<User> createUser(@Valid @RequestBody User userRequest) throws InterruptedException {
 
         Thread.sleep(1000 + (long) (Math.random() * 1000));
 
@@ -28,6 +30,14 @@ public class Controller {
 
         return ResponseEntity.ok(userResponse);
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
 }
+
 
 
