@@ -14,7 +14,7 @@ import java.util.Map;
 public class Controller {
 
     @GetMapping("/user")
-    public ResponseEntity<String> getUser() throws InterruptedException {
+    public ResponseEntity<?> getUser() throws InterruptedException {
 
         Thread.sleep(1000 + (long) (Math.random() * 1000));
 
@@ -22,7 +22,7 @@ public class Controller {
     }
 
     @PostMapping("/user")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User userRequest) throws InterruptedException {
+    public ResponseEntity<?> createUser(@Valid @RequestBody User userRequest) throws InterruptedException {
 
         Thread.sleep(1000 + (long) (Math.random() * 1000));
 
@@ -32,10 +32,16 @@ public class Controller {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(InterruptedException.class)
+    public ResponseEntity<?> handleInterruptedException() {
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Поток был прерван");
     }
 }
 
