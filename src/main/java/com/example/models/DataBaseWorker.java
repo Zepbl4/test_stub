@@ -6,7 +6,7 @@ import java.sql.*;
 
 @Component
 public class DataBaseWorker {
-    private final String url = "jdbc:postgresql://192.168.0.11:5432/mydatabase";
+    private final String url = "jdbc:postgresql://localhost:5432/mydatabase";
     private final String username = "admin";
     private final String password = "admin";
 
