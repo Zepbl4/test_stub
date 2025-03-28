@@ -1,24 +1,40 @@
 package com.example.controller;
 
+import com.example.models.DataBaseWorker;
 import com.example.models.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import java.util.Date;
 import javax.validation.Valid;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 public class Controller {
+    private final DataBaseWorker dbWorker;
+    @Autowired
+    public Controller(DataBaseWorker dbWorker) {
+        this.dbWorker = dbWorker;
+    }
 
     @GetMapping("/user")
-    public ResponseEntity<?> getUser() throws InterruptedException {
+    public ResponseEntity<?> getUser(@RequestParam String login) throws InterruptedException,SQLException {
 
         Thread.sleep(1000 + (long) (Math.random() * 1000));
-
-        return ResponseEntity.ok("{\"login\":\"Login1\",\"status\":\"ok\"}");
+        try {
+            User user = dbWorker.getUserByLogin(login);
+            if (user == null) {
+                throw new UserNotFoundException("User with login " + login + " not found");
+            }
+            return ResponseEntity.ok(user);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+        }
     }
 
     @PostMapping("/user")
@@ -26,9 +42,10 @@ public class Controller {
 
         Thread.sleep(1000 + (long) (Math.random() * 1000));
 
-        User userResponse = new User(userRequest.getLogin(), userRequest.getPassword());
+        userRequest.setDate(new Date());
+        String result = dbWorker.insertUser(userRequest);
 
-        return ResponseEntity.ok(userResponse);
+        return ResponseEntity.ok(result);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -40,8 +57,13 @@ public class Controller {
 
     @ExceptionHandler(InterruptedException.class)
     public ResponseEntity<?> handleInterruptedException() {
-
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Поток был прерван");
+    }
+
+    static class UserNotFoundException extends Exception {
+        public UserNotFoundException(String message) {
+            super(message);
+        }
     }
 }
 
