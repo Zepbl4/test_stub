@@ -6,7 +6,7 @@ import java.sql.*;
 
 @Component
 public class DataBaseWorker {
-    private final String url = "jdbc:postgresql://postgresql:5432/mydatabase";
+    private final String url = "jdbc:postgresql://host.docker.internal:5432/mydatabase";
     private final String username = "admin";
     private final String password = "admin";
 
