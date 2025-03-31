@@ -2,7 +2,6 @@ package com.example.controller;
 
 import com.example.models.DataBaseWorker;
 import com.example.models.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,11 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class Controller {
-    private final DataBaseWorker dbWorker;
-    @Autowired
-    public Controller(DataBaseWorker dbWorker) {
-        this.dbWorker = dbWorker;
-    }
+    DataBaseWorker dbWorker = new DataBaseWorker();
 
     @GetMapping("/user")
     public ResponseEntity<?> getUser(@RequestParam String login) throws InterruptedException,SQLException {
