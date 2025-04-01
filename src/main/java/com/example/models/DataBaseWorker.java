@@ -1,8 +1,10 @@
 package com.example.models;
 
+import org.springframework.stereotype.Component;
 
 import java.sql.*;
 
+@Component
 public class DataBaseWorker {
     private final String url = "jdbc:postgresql://192.168.0.11:5432/mydatabase";
     private final String username = "admin";
@@ -26,20 +28,20 @@ public class DataBaseWorker {
 
             resultSet = statement.executeQuery(sql);
 
-            resultSet.next();
-            if (login.equals(resultSet.getString("login"))) {
+            if (resultSet.next()) {
                 user = new User(
-                        resultSet.getString("login"),
-                        resultSet.getString("password"),
-                        resultSet.getDate("date"),
-                        resultSet.getString("email")
+                    resultSet.getString("login"),
+                    resultSet.getString("password"),
+                    resultSet.getDate("date"),
+                    resultSet.getString("email")
                 );
+                return user;
+            } else {
+                throw new UserNotFoundException("User with login " + login + " not found");
             }
-            return user;
 
         } catch (SQLException e) {
-            System.err.println("Error executing query: " + e.getMessage());
-            return null;
+            throw new UserNotFoundException("Error executing query: " + e.getMessage());
 
         } finally {
 
@@ -81,6 +83,12 @@ public class DataBaseWorker {
         }
 
 
+    }
+
+    static public class UserNotFoundException extends RuntimeException {
+        public UserNotFoundException(String message) {
+            super(message);
+        }
     }
 }
 

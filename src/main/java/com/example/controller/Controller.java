@@ -2,6 +2,8 @@ package com.example.controller;
 
 import com.example.models.DataBaseWorker;
 import com.example.models.User;
+import com.example.models.DataBaseWorker.UserNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +17,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class Controller {
+
+    @Autowired
     DataBaseWorker dbWorker = new DataBaseWorker();
 
     @GetMapping("/user")
@@ -23,9 +27,6 @@ public class Controller {
         Thread.sleep(1000 + (long) (Math.random() * 1000));
         try {
             User user = dbWorker.getUserByLogin(login);
-            if (user == null) {
-                throw new UserNotFoundException("User with login " + login + " not found");
-            }
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
@@ -55,11 +56,7 @@ public class Controller {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Поток был прерван");
     }
 
-    static class UserNotFoundException extends Exception {
-        public UserNotFoundException(String message) {
-            super(message);
-        }
-    }
+
 }
 
 
