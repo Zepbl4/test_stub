@@ -53,9 +53,9 @@ public class Controller {
             return ResponseEntity.ok(user);
 
         } catch (IOException e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Failed to read users file: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to read users file: " + e.getMessage()));
         } catch (FileWorker.FileIsEmpty e){
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
     }
 
