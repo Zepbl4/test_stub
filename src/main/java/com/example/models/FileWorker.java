@@ -24,24 +24,19 @@ public class FileWorker {
         objectMapper.setDateFormat(new java.text.SimpleDateFormat("yyyy-MM-dd"));
     }
 
-    private String getRandomLine(RandomAccessFile file) throws IOException {
-        String selectedLine = null;
-        int count = 0;
-        String line;
-
-        while ((line = file.readLine()) != null) {
-            count++;
-            if (random.nextInt(count) == 0) {
-                selectedLine = line;
-            }
-        }
-        return selectedLine;
-    }
-
     public Map<String, Object> readUserFile() throws IOException {
         try (RandomAccessFile file = new RandomAccessFile(USERS_READ_FILE, "r")) {
 
-            String randomLine = getRandomLine(file);
+            String randomLine = null;
+            int count = 0;
+            String line;
+
+            while ((line = file.readLine()) != null) {
+                count++;
+                if (random.nextInt(count) == 0) {
+                    randomLine = line;
+                }
+            }
 
             if (randomLine != null) {
                 return objectMapper.readValue(randomLine, new TypeReference<>() {});
