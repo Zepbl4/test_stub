@@ -20,6 +20,7 @@ import java.util.Map;
 @RequestMapping("/api")
 public class Controller {
 
+    @Autowired
     FileWorker fileWorker = new FileWorker();
 
     @Autowired
@@ -28,7 +29,7 @@ public class Controller {
     @GetMapping("/user")
     public ResponseEntity<?> getUser(@RequestParam String login) throws InterruptedException,SQLException {
 
-        Thread.sleep(1000 + (long) (Math.random() * 1000));
+        delay();
 
         try {
             User user = dbWorker.getUserByLogin(login);
@@ -37,7 +38,6 @@ public class Controller {
 
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
-
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to write users file: " + e.getMessage()));
         }
@@ -46,16 +46,14 @@ public class Controller {
     @GetMapping("/read")
     public ResponseEntity<?> getRandomUser() throws InterruptedException {
 
-        Thread.sleep(1000 + (long) (Math.random() * 1000));
+        delay();
 
         try {
-            Map<String, Object> user = fileWorker.readUserFile();
+            User user = fileWorker.readUserFile();
             return ResponseEntity.ok(user);
 
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to read users file: " + e.getMessage()));
-        } catch (FileWorker.FileIsEmpty e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
     }
 
@@ -64,7 +62,7 @@ public class Controller {
     @PostMapping("/user")
     public ResponseEntity<?> createUser(@Valid @RequestBody User userRequest) throws InterruptedException {
 
-        Thread.sleep(1000 + (long) (Math.random() * 1000));
+        delay();
 
         userRequest.setDate(new Date());
         String result = dbWorker.insertUser(userRequest);
@@ -82,6 +80,10 @@ public class Controller {
     @ExceptionHandler(InterruptedException.class)
     public ResponseEntity<?> handleInterruptedException() {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Поток был прерван");
+    }
+
+    private void delay() throws InterruptedException {
+        Thread.sleep(1000 + (long) (Math.random() * 1000));
     }
 
 

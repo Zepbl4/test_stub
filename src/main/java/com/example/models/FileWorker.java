@@ -1,17 +1,19 @@
 package com.example.models;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.stereotype.Component;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
+@Component
 public class FileWorker {
     private final Random random = new Random();
     private static final String USERS_WRITE_FILE = "users_write.txt";
@@ -24,29 +26,23 @@ public class FileWorker {
         objectMapper.setDateFormat(new java.text.SimpleDateFormat("yyyy-MM-dd"));
     }
 
-    public Map<String, Object> readUserFile() throws IOException {
+    public User readUserFile() throws IOException {
         try (RandomAccessFile file = new RandomAccessFile(USERS_READ_FILE, "r")) {
 
-            String randomLine = null;
-            int count = 0;
+            List<String> lines = new ArrayList<>(10);
             String line;
 
             while ((line = file.readLine()) != null) {
-                count++;
-                if (random.nextInt(count) == 0) {
-                    randomLine = line;
-                }
+                lines.add(line);
             }
 
-            if (randomLine != null) {
-                return objectMapper.readValue(randomLine, new TypeReference<>() {});
+            String randomLine = lines.get(random.nextInt(10));
 
-            } else {
-                throw new FileIsEmpty("File is empty");
-            }
+            return objectMapper.readValue(randomLine, User.class);
+
 
         }  catch (IOException e) {
-            throw new IOException("Failed to read users file: " + e.getMessage());
+            throw new IOException("Failed to read users file: " + e);
         }
     }
 
@@ -55,12 +51,6 @@ public class FileWorker {
 
             String userJson = objectMapper.writeValueAsString(user);
             writer.write(userJson + System.lineSeparator());
-        }
-    }
-
-    static public class FileIsEmpty extends RuntimeException {
-        public FileIsEmpty(String message) {
-            super(message);
         }
     }
 }
