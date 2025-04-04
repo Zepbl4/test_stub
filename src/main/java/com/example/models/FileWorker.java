@@ -40,7 +40,6 @@ public class FileWorker {
 
             return objectMapper.readValue(randomLine, User.class);
 
-
         }  catch (IOException e) {
             throw new IOException("Failed to read users file: " + e);
         }

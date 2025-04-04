@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Date;
 import javax.validation.Valid;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +26,7 @@ public class Controller {
     DataBaseWorker dbWorker = new DataBaseWorker();
 
     @GetMapping("/user")
-    public ResponseEntity<?> getUser(@RequestParam String login) throws InterruptedException,SQLException {
+    public ResponseEntity<?> getUser(@RequestParam String login) throws InterruptedException, IOException {
 
         delay();
 
@@ -38,23 +37,15 @@ public class Controller {
 
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to write users file: " + e.getMessage()));
         }
     }
 
     @GetMapping("/read")
-    public ResponseEntity<?> getRandomUser() throws InterruptedException {
+    public ResponseEntity<?> getRandomUser() throws InterruptedException, IOException {
 
         delay();
-
-        try {
             User user = fileWorker.readUserFile();
             return ResponseEntity.ok(user);
-
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to read users file: " + e.getMessage()));
-        }
     }
 
 
