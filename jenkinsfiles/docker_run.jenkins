@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     stages {
-        stage('Build') {
+        stage('Run') {
             steps {
                  
                   sh 'docker run --name test-stub -d -p 8085:8080 test_stub'
