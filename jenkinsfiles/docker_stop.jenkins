@@ -5,7 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                  
-                  sh 'docker stop test_stub'
+                  sh 'docker stop test-stub'
               
             }
         }
