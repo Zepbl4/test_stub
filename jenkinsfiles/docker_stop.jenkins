@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     stages {
-        stage('Build') {
+        stage('Stop') {
             steps {
                  
                   sh 'docker stop test-stub'
