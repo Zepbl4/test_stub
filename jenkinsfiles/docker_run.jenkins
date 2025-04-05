@@ -1,0 +1,13 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Build') {
+            steps {
+                 
+                  sh 'docker run --no-cache --name test-stub -d -p 8085:8080 test_stub'
+              
+            }
+        }
+    }
+}
