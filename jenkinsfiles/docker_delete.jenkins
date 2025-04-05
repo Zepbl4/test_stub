@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Delete') {
+            steps {
+                  script {
+                   
+                    def containerExists = sh(script: 'docker ps -a --filter "name=test-stub" --format "{{.Names}}"', returnStdout: true).trim()
+                    if (containerExists == 'test-stub') {
+                        sh 'docker stop test-stub || true'
+                        sh 'docker rm test-stub'
+                        
+                    }
+                    
+                    def imageExists = sh(script: 'docker images -q test_stub', returnStdout: true).trim()
+                    if (imageExists) {
+                        sh 'docker rmi test_stub'                        
+                    }
+                }
+              
+            }
+        }
+    }
+}
