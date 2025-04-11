@@ -8,4 +8,3 @@
 {"login":"user781","password":"pass781","date":"2022-02-20","email":"user781@testmail.ru"}
 {"login":"user11","password":"pass11","date":"2020-01-12","email":"user11@testmail.ru"}
 {"login":"user9","password":"pass9","date":"2020-01-10","email":"user9@testmail.ru"}
-{"login":"user25","password":"pass25","date":"2020-01-26","email":"user25@testmail.ru"}

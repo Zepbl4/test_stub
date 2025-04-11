@@ -26,7 +26,7 @@ public class Controller {
     DataBaseWorker dbWorker = new DataBaseWorker();
 
     @GetMapping("/user")
-    public ResponseEntity<?> getUser(@RequestParam String login) throws InterruptedException, IOException {
+    public ResponseEntity<?> getUser(@RequestParam String login) throws IOException {
 
         delay();
 
@@ -41,17 +41,19 @@ public class Controller {
     }
 
     @GetMapping("/read")
-    public ResponseEntity<?> getRandomUser() throws InterruptedException, IOException {
+    public ResponseEntity<?> getRandomUser() throws IOException {
 
-        delay();
-            User user = fileWorker.readUserFile();
-            return ResponseEntity.ok(user);
+       // delay();
+
+        User user = fileWorker.readUserFile();
+
+        return ResponseEntity.ok(user);
     }
 
 
 
     @PostMapping("/user")
-    public ResponseEntity<?> createUser(@Valid @RequestBody User userRequest) throws InterruptedException {
+    public ResponseEntity<?> createUser(@Valid @RequestBody User userRequest)  {
 
         delay();
 
@@ -73,8 +75,12 @@ public class Controller {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Поток был прерван");
     }
 
-    private void delay() throws InterruptedException {
-        Thread.sleep(1000 + (long) (Math.random() * 1000));
+    private void delay() {
+        try {
+            Thread.sleep(1000 + (long) (Math.random() * 1000));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

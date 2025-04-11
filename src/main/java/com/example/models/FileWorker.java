@@ -9,8 +9,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 @Component
@@ -29,16 +27,18 @@ public class FileWorker {
     public User readUserFile() throws IOException {
         try (RandomAccessFile file = new RandomAccessFile(USERS_READ_FILE, "r")) {
 
-            List<String> lines = new ArrayList<>(10);
-            String line;
+            int stringNum = random.nextInt(10);
+            String line = null;
 
-            while ((line = file.readLine()) != null) {
-                lines.add(line);
+            for (int i = 0; i <= stringNum; i++){
+                if (i == stringNum){
+                    line = file.readLine();
+                } else {
+                    file.readLine();
+                }
             }
 
-            String randomLine = lines.get(random.nextInt(10));
-
-            return objectMapper.readValue(randomLine, User.class);
+            return objectMapper.readValue(line, User.class);
 
         }  catch (IOException e) {
             throw new IOException("Failed to read users file: " + e);
